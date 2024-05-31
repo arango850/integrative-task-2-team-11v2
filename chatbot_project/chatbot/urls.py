@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import PredictIntentView
+from . import views
 
 urlpatterns = [
-    path('predict/', PredictIntentView.as_view(), name='predict-intent'),
+     path('chatbot/', views.chatbot_view, name='chatbot'),
 ]
 
