@@ -1,24 +1,27 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot de Apoyo Psicológico</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Chatbot</title>
+    <!-- Referencia al archivo CSS -->
+    <link rel="stylesheet" href="{% static 'app_name/css/styles.css' %}">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Chatbot de Apoyo Psicológico</h1>
-        </header>
-        <div class="chat-container" id="chat-container">
-            <div class="chat-box" id="chat-box"></div>
-            <input type="text" id="user-input" placeholder="Escribe aquí...">
-            <button id="send-btn">Enviar</button>
-        </div>
+    <div class="chat-container">
+        <!-- Aquí se mostrarán los mensajes del chat -->
+        <div id="chatbox"></div>
+        <!-- Formulario para enviar mensajes -->
+        <form id="user-input">
+            <input type="text" id="usermsg" placeholder="Escribe tu mensaje aquí...">
+            <!-- Botón para enviar el mensaje -->
+            <button type="submit" id="submitmsg">Enviar</button>
+        </form>
     </div>
-    <script src="script.js"></script>
+
+    <!-- Referencia al archivo JavaScript -->
+    <script src="{% static 'app_name/js/script.js' %}"></script>
 </body>
 </html>
 
