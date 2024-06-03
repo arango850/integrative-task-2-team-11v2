@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
         userMessage.textContent = "Usuario: " + message;
         chatBox.appendChild(userMessage);
     }
-
+ 
     function showMessageChatbot(message) {
         const chatbotMessage = document.createElement("p");
         chatbotMessage.textContent = "Chatbot: " + message;
