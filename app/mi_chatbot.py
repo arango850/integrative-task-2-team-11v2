@@ -12,6 +12,9 @@ class Chatbot(KnowledgeEngine):
     def farewell(self):
         print("Chatbot: ¡Hasta luego!")
 
+class Saludos(Fact):
+    pass
+
 class Symptom(Fact):
     pass
 
@@ -57,6 +60,14 @@ class MentalHealthChatbot(KnowledgeEngine):
     @Rule(Context(situation='dificultades_en_el_trabajo'))
     def handle_work_issues(self):
         self.declare(Fact(response="Las dificultades en el trabajo pueden ser muy estresantes. Intentar establecer límites claros entre el trabajo y la vida personal puede ayudar a manejar el estrés laboral."))
+
+    @Rule(Message(content="Hola"))
+    def greet(self):
+         self.declare(Fact(response="¡Hola! ¿En qué puedo ayudarte?"))
+
+    @Rule(Message(content="Adiós"))
+    def farewell(self):
+        self.declare(Fact(response="¡Hasta luego!"))   
 
 # Instanciar el chatbot y cargar las reglas
 chatbot = Chatbot()

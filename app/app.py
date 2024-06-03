@@ -39,6 +39,10 @@ def chat():
             chatbot_engine.declare(Symptom(type='insomnio'))
         elif 'fatiga' in user_input.lower():
             chatbot_engine.declare(Symptom(type='fatiga'))
+        elif 'hola' in user_input.lower():
+            chatbot_engine.declare(Message(content='Hola'))
+        elif 'adiós' in user_input.lower():
+            chatbot_engine.declare(Message(content='Adiós'))        
         else:
             chatbot_engine.declare(Fact(response="Lo siento, no estoy seguro de cómo ayudarte con eso. ¿Puedes darme más detalles?"))
 
