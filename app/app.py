@@ -21,30 +21,30 @@ def chat():
         chatbot_engine.reset()
 
         # Declaramos los hechos basados en la entrada del usuario
-        if 'ansiedad' in user_input.lower():
-            chatbot_engine.declare(Symptom(type='ansiedad'))
-        elif 'depresion' in user_input.lower():
-            chatbot_engine.declare(Symptom(type='depresion'))
-        elif 'triste' in user_input.lower():
-            chatbot_engine.declare(Emotion(state='triste'))
-        elif 'estresado' in user_input.lower():
-            chatbot_engine.declare(Emotion(state='estresado'))
-        elif 'problemas familiares' in user_input.lower():
-            chatbot_engine.declare(Context(situation='problemas_familiares'))
-        elif 'dificultades en el trabajo' in user_input.lower():
-            chatbot_engine.declare(Context(situation='dificultades_en_el_trabajo'))
-        elif 'contento' in user_input.lower():
-            chatbot_engine.declare(Emotion(state='contento'))
-        elif 'insomnio' in user_input.lower():
-            chatbot_engine.declare(Symptom(type='insomnio'))
-        elif 'fatiga' in user_input.lower():
-            chatbot_engine.declare(Symptom(type='fatiga'))
-        elif 'hola' in user_input.lower():
+        if 'hola' in user_input.lower():
             chatbot_engine.declare(Message(content='Hola'))
         elif 'adiós' in user_input.lower():
             chatbot_engine.declare(Message(content='Adiós'))        
         else:
-            chatbot_engine.declare(Fact(response="Lo siento, no estoy seguro de cómo ayudarte con eso. ¿Puedes darme más detalles?"))
+            # Identificar los problemas de salud mental
+            if 'ansiedad' in user_input.lower():
+                chatbot_engine.declare(Symptom(type='ansiedad'))
+            if 'depresion' in user_input.lower():
+                chatbot_engine.declare(Symptom(type='depresion'))
+            if 'triste' in user_input.lower():
+                chatbot_engine.declare(Emotion(state='triste'))
+            if 'estresado' in user_input.lower():
+                chatbot_engine.declare(Emotion(state='estresado'))
+            if 'problemas familiares' in user_input.lower():
+                chatbot_engine.declare(Context(situation='problemas_familiares'))
+            if 'dificultades en el trabajo' in user_input.lower():
+                chatbot_engine.declare(Context(situation='dificultades_en_el_trabajo'))
+            if 'contento' in user_input.lower():
+                chatbot_engine.declare(Emotion(state='contento'))
+            if 'insomnio' in user_input.lower():
+                chatbot_engine.declare(Symptom(type='insomnio'))
+            if 'fatiga' in user_input.lower():
+                chatbot_engine.declare(Symptom(type='fatiga'))
 
         chatbot_engine.run()
 
