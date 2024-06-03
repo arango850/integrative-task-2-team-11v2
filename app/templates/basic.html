@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot de Salud Mental</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box">
+            <!-- Aquí se mostrarán los mensajes de chat -->
+        </div>
+        <input type="text" id="user-input" placeholder="Escribe tu mensaje...">
+        <button id="send-button">Enviar</button>
+        <button id="clear-button">Nuevo Chat</button>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    
+    
+</body>
+</html>
