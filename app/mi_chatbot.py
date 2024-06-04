@@ -4,6 +4,9 @@ from bayesian_model import predict_emotion_and_symptom
 class Message(Fact):
     pass
 
+class Explanation(Fact):
+    pass
+
 class Chatbot(KnowledgeEngine):
     @Rule(Message(content="Hola"))
     def greet(self):
@@ -32,11 +35,16 @@ class MentalHealthChatbot(KnowledgeEngine):
         # Convertir las variables emocionales y contextuales a un formato que la función de inferencia pueda utilizar
         emotion_mapping = {0: 'contento', 1: 'triste', 2: 'estresado'}
         symptom_mapping = {0: 'sin sintomas', 1: 'fatiga', 2: 'insomnio', 3: 'ansiedad'}
+        contex_mapping = {0: 'dificultades_en_el_trabajo', 1: 'problemas_familiares'}
 
         emotion_state = emotion_mapping[emocion]
-        emotion, symptom = self.inference(emotion_state)
+        context_situation = contex_mapping[contexto]
+        emotion, symptom, context = self.inference(emotion_state,context_situation)
 
-        return f"La emoción más probable es {emotion} y el síntoma más probable es {symptom}"
+        if emotion.__eq__("contento"):
+            return f"La emoción más probable es {emotion} y el síntoma más probable es {symptom} del contexto sin_contexto"
+        else:
+            return f"La emoción más probable es {emotion} y el síntoma más probable es {symptom} del contexto {context}"
 
     @Rule(Symptom(type='ansiedad') & Emotion(state='estresado'))
     def handle_anxiety_and_stress(self):
@@ -113,6 +121,40 @@ class MentalHealthChatbot(KnowledgeEngine):
     @Rule(Message(content="Adiós"))
     def farewell(self):
         self.declare(Fact(response="¡Hasta luego!"))
+
+    @Rule(Symptom(type='ansiedad'))
+    def explain_anxiety(self):
+        self.declare(Fact(explanation="La ansiedad puede ser causada por preocupaciones excesivas o miedo a situaciones futuras. Es una respuesta natural del cuerpo al estrés, pero puede ser abrumadora si no se maneja adecuadamente."))
+
+    @Rule(Symptom(type='depresion'))
+    def explain_depression(self):
+        self.declare(Fact(explanation="La depresión puede ser causada por una combinación de factores genéticos, biológicos, ambientales y psicológicos. Puede manifestarse como sentimientos persistentes de tristeza, falta de interés en actividades, cambios en el apetito y dificultad para concentrarse."))
+
+    @Rule(Symptom(type='fatiga'))
+    def explain_fatigue(self):
+        self.declare(Fact(explanation="La fatiga puede ser causada por falta de sueño, estrés, mala alimentación o falta de actividad física. También puede ser un síntoma de condiciones médicas subyacentes, como anemia o hipotiroidismo."))
+    
+    @Rule(Symptom(type='insomnio'))
+    def explain_insomnia(self):
+        self.declare(Fact(explanation="El insomnio puede ser causado por una variedad de factores, incluidos el estrés, la ansiedad, los hábitos de sueño irregulares, el consumo de cafeína o ciertas condiciones médicas. La falta de sueño puede tener un impacto significativo en el estado de ánimo y el funcionamiento diario."))
+
+    @Rule(Emotion(state='triste'))
+    def explain_sadness(self):
+        self.declare(Fact(explanation="La tristeza es una emoción natural que puede ser desencadenada por eventos estresantes, pérdidas personales o cambios en la vida. Es importante reconocer y expresar estas emociones para procesarlas de manera saludable."))
+
+    @Rule(Context(situation='problemas_familiares'))
+    def explain_family_problems(self):
+            self.declare(Fact(explanation="Los problemas familiares pueden causar estrés, ansiedad y conflicto emocional. Es importante comunicarse abierta y honestamente con los miembros de la familia para resolver problemas y mantener relaciones saludables."))
+
+    @Rule(Context(situation='dificultades_en_el_trabajo'))
+    def explain_work_issues(self):
+        self.declare(Fact(explanation="Las dificultades en el trabajo pueden ser una fuente significativa de estrés y ansiedad. Es importante buscar apoyo y desarrollar estrategias para manejar el estrés laboral de manera efectiva."))
+   
+    
+
+
+    
+    
 
 
 
