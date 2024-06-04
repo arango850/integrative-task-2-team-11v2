@@ -52,5 +52,5 @@ def predict_emotion_and_symptom(emotion_state, context_situation):
     most_probable_symptom = query_result['symptom']
     return emotion_state, most_probable_symptom,context_situation
 
-
+ 
 
