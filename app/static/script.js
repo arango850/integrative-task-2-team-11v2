@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function showMessageUser(message) {
         const userMessage = document.createElement("p");
-        userMessage.textContent = "Usuario: " + message;
+        userMessage.textContent = "User: " + message;
         chatBox.appendChild(userMessage);
     }
  
@@ -33,16 +33,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 if (data.explanation) {
                     showMessageChatbot(data.explanation);
-                    showMessageChatbot("¿Te gustaría saber más sobre esta emoción?");
+                    showMessageChatbot("Would you like to know more about this emotion?");
                 }
             })
             .catch(error => console.error('Error:', error));
-            userInput.value = ""; // Limpiar el campo de entrada
+            userInput.value = ""; // Clear the input field
         }
     }
     
     function expandInfo() {
-        const userResponse = "sí"; // Cambiar esto si lo necesitas
+        const userResponse = "yes"; // Change this if needed
         fetch('/expand', {
             method: 'POST',
             headers: {
@@ -59,11 +59,12 @@ document.addEventListener("DOMContentLoaded", function() {
     sendButton.addEventListener("click", sendMessage);
 
     clearButton.addEventListener("click", function() {
-        chatBox.innerHTML = ""; // Limpiar el historial de mensajes
-        userInput.value = ""; // Limpiar el campo de entrada
+        chatBox.innerHTML = ""; // Clear chat history
+        userInput.value = ""; // Clear the input field
     });
 
 });
+
 
 
 

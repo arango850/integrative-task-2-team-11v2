@@ -8,13 +8,13 @@ class Explanation(Fact):
     pass
 
 class Chatbot(KnowledgeEngine):
-    @Rule(Message(content="Hola"))
+    @Rule(Message(content="Hello"))
     def greet(self):
-        self.declare(Fact(response="¡Hola! ¿En qué puedo ayudarte?"))
+        self.declare(Fact(response="Hello! How can I help you?"))
 
-    @Rule(Message(content="Adiós"))
+    @Rule(Message(content="Goodbye"))
     def farewell(self):
-        self.declare(Fact(response="¡Hasta luego!"))
+        self.declare(Fact(response="See you later!"))
 
 class Symptom(Fact):
     pass
@@ -29,126 +29,127 @@ class MentalHealthChatbot(KnowledgeEngine):
 
     def __init__(self):
         super().__init__()
-        self.inference = predict_emotion_and_symptom  # Función de inferencia bayesiana
+        self.inference = predict_emotion_and_symptom  # Bayesian inference function
     
-    def infer_respuesta(self, emocion, sintoma, contexto):
-        # Convertir las variables emocionales y contextuales a un formato que la función de inferencia pueda utilizar
-        emotion_mapping = {0: 'contento', 1: 'triste', 2: 'estresado'}
-        symptom_mapping = {0: 'sin sintomas', 1: 'fatiga', 2: 'insomnio', 3: 'ansiedad'}
-        contex_mapping = {0: 'dificultades_en_el_trabajo', 1: 'problemas_familiares'}
+    def infer_response(self, emotion, symptom, context):
+        # Convert emotional and contextual variables to a format the inference function can use
+        emotion_mapping = {0: 'happy', 1: 'sad', 2: 'stressed'}
+        symptom_mapping = {0: 'no symptoms', 1: 'fatigue', 2: 'insomnia', 3: 'anxiety'}
+        context_mapping = {0: 'work_difficulties', 1: 'family_problems'}
 
-        emotion_state = emotion_mapping[emocion]
-        context_situation = contex_mapping[contexto]
-        emotion, symptom, context = self.inference(emotion_state,context_situation)
+        emotion_state = emotion_mapping[emotion]
+        context_situation = context_mapping[context]
+        emotion, symptom, context = self.inference(emotion_state, context_situation)
 
-        if emotion.__eq__("contento"):
-            return f"La emoción más probable es {emotion} y el síntoma más probable es {symptom} del contexto sin_contexto"
+        if emotion == "happy":
+            return f"The most likely emotion is {emotion} and the most likely symptom is {symptom} in the context without context"
         else:
-            return f"La emoción más probable es {emotion} y el síntoma más probable es {symptom} del contexto {context}"
+            return f"The most likely emotion is {emotion} and the most likely symptom is {symptom} in the context {context}"
 
-    @Rule(Symptom(type='ansiedad') & Emotion(state='estresado'))
+    @Rule(Symptom(type='anxiety') & Emotion(state='stressed'))
     def handle_anxiety_and_stress(self):
-        self.declare(Fact(response=self.infer_respuesta(2, 3, 0)))
+        self.declare(Fact(response=self.infer_response(2, 3, 0)))
 
-    @Rule(Symptom(type='depresion') & Context(situation='problemas_familiares'))
+    @Rule(Symptom(type='depression') & Context(situation='family_problems'))
     def handle_depression_and_family_problems(self):
-        self.declare(Fact(response=self.infer_respuesta(1, 1, 0)))
+        self.declare(Fact(response=self.infer_response(1, 1, 0)))
 
-    @Rule(Emotion(state='triste') & ~Symptom(type='depresion'))
+    @Rule(Emotion(state='sad') & ~Symptom(type='depression'))
     def handle_sadness_without_depression(self):
-        self.declare(Fact(response=self.infer_respuesta(1, 0, 0)))
+        self.declare(Fact(response=self.infer_response(1, 0, 0)))
 
-    @Rule(Emotion(state='estresado') & Context(situation='dificultades_en_el_trabajo'))
+    @Rule(Emotion(state='stressed') & Context(situation='work_difficulties'))
     def handle_stress_and_work_issues(self):
-        self.declare(Fact(response=self.infer_respuesta(2, 0, 1)))
+        self.declare(Fact(response=self.infer_response(2, 0, 1)))
 
-    @Rule(Symptom(type='fatiga') & Emotion(state='triste') & ~Symptom(type='insomnio'))
+    @Rule(Symptom(type='fatigue') & Emotion(state='sad') & ~Symptom(type='insomnia'))
     def handle_fatigue_and_sadness_without_insomnia(self):
-        self.declare(Fact(response=self.infer_respuesta(1, 1, 0)))
+        self.declare(Fact(response=self.infer_response(1, 1, 0)))
 
-    @Rule(Symptom(type='insomnio') & Symptom(type='ansiedad'))
+    @Rule(Symptom(type='insomnia') & Symptom(type='anxiety'))
     def handle_insomnia_and_anxiety(self):
-        self.declare(Fact(response=self.infer_respuesta(2, 3, 0)))
+        self.declare(Fact(response=self.infer_response(2, 3, 0)))
 
-    @Rule(Symptom(type='fatiga') & Symptom(type='insomnio'))
+    @Rule(Symptom(type='fatigue') & Symptom(type='insomnia'))
     def handle_fatigue_and_insomnia(self):
-        self.declare(Fact(response=self.infer_respuesta(2, 2, 0)))
+        self.declare(Fact(response=self.infer_response(2, 2, 0)))
 
-    @Rule(Symptom(type='depresion') & Emotion(state='triste') & Context(situation='dificultades_en_el_trabajo'))
+    @Rule(Symptom(type='depression') & Emotion(state='sad') & Context(situation='work_difficulties'))
     def handle_depression_sadness_work_issues(self):
-        self.declare(Fact(response=self.infer_respuesta(1, 1, 1)))
+        self.declare(Fact(response=self.infer_response(1, 1, 1)))
 
-    @Rule(Symptom(type='ansiedad'))
+    @Rule(Symptom(type='anxiety'))
     def handle_anxiety(self):
-        self.declare(Fact(response=self.infer_respuesta(2, 3, 0)))
+        self.declare(Fact(response=self.infer_response(2, 3, 0)))
 
-    @Rule(Symptom(type='depresion'))
+    @Rule(Symptom(type='depression'))
     def handle_depression(self):
-        self.declare(Fact(response=self.infer_respuesta(1, 1, 0)))
+        self.declare(Fact(response=self.infer_response(1, 1, 0)))
 
-    @Rule(Emotion(state='triste'))
+    @Rule(Emotion(state='sad'))
     def handle_sadness(self):
-        self.declare(Fact(response=self.infer_respuesta(1, 0, 0)))
+        self.declare(Fact(response=self.infer_response(1, 0, 0)))
 
-    @Rule(Emotion(state='estresado'))
+    @Rule(Emotion(state='stressed'))
     def handle_stress(self):
-        self.declare(Fact(response=self.infer_respuesta(2, 0, 0)))
+        self.declare(Fact(response=self.infer_response(2, 0, 0)))
 
-    @Rule(Context(situation='problemas_familiares'))
+    @Rule(Context(situation='family_problems'))
     def handle_family_problems(self):
-        self.declare(Fact(response=self.infer_respuesta(0, 0, 0)))
+        self.declare(Fact(response=self.infer_response(0, 0, 0)))
 
-    @Rule(Emotion(state='contento'))
+    @Rule(Emotion(state='happy'))
     def handle_happiness(self):
-        self.declare(Fact(response=self.infer_respuesta(0, 0, 0)))
+        self.declare(Fact(response=self.infer_response(0, 0, 0)))
 
-    @Rule(Symptom(type='insomnio'))
+    @Rule(Symptom(type='insomnia'))
     def handle_insomnia(self):
-        self.declare(Fact(response=self.infer_respuesta(2, 2, 0)))
+        self.declare(Fact(response=self.infer_response(2, 2, 0)))
 
-    @Rule(Symptom(type='fatiga'))
+    @Rule(Symptom(type='fatigue'))
     def handle_fatigue(self):
-        self.declare(Fact(response=self.infer_respuesta(1, 1, 0)))
+        self.declare(Fact(response=self.infer_response(1, 1, 0)))
 
-    @Rule(Context(situation='dificultades_en_el_trabajo'))
+    @Rule(Context(situation='work_difficulties'))
     def handle_work_issues(self):
-        self.declare(Fact(response=self.infer_respuesta(2, 0, 1)))
+        self.declare(Fact(response=self.infer_response(2, 0, 1)))
 
-    @Rule(Message(content="Hola"))
+    @Rule(Message(content="Hello"))
     def greet(self):
-        self.declare(Fact(response="¡Hola! ¿En qué puedo ayudarte?"))
+        self.declare(Fact(response="Hello! How can I help you?"))
 
-    @Rule(Message(content="Adiós"))
+    @Rule(Message(content="Goodbye"))
     def farewell(self):
-        self.declare(Fact(response="¡Hasta luego!"))
+        self.declare(Fact(response="See you later!"))
 
-    @Rule(Symptom(type='ansiedad'))
+    @Rule(Symptom(type='anxiety'))
     def explain_anxiety(self):
-        self.declare(Fact(explanation="La ansiedad puede ser causada por preocupaciones excesivas o miedo a situaciones futuras. Es una respuesta natural del cuerpo al estrés, pero puede ser abrumadora si no se maneja adecuadamente."))
+        self.declare(Fact(explanation="Anxiety can be caused by excessive worries or fear of future situations. It is a natural body response to stress, but it can be overwhelming if not managed properly."))
 
-    @Rule(Symptom(type='depresion'))
+    @Rule(Symptom(type='depression'))
     def explain_depression(self):
-        self.declare(Fact(explanation="La depresión puede ser causada por una combinación de factores genéticos, biológicos, ambientales y psicológicos. Puede manifestarse como sentimientos persistentes de tristeza, falta de interés en actividades, cambios en el apetito y dificultad para concentrarse."))
+        self.declare(Fact(explanation="Depression can be caused by a combination of genetic, biological, environmental, and psychological factors. It can manifest as persistent feelings of sadness, lack of interest in activities, changes in appetite, and difficulty concentrating."))
 
-    @Rule(Symptom(type='fatiga'))
+    @Rule(Symptom(type='fatigue'))
     def explain_fatigue(self):
-        self.declare(Fact(explanation="La fatiga puede ser causada por falta de sueño, estrés, mala alimentación o falta de actividad física. También puede ser un síntoma de condiciones médicas subyacentes, como anemia o hipotiroidismo."))
-    
-    @Rule(Symptom(type='insomnio'))
+        self.declare(Fact(explanation="Fatigue can be caused by lack of sleep, stress, poor diet, or lack of physical activity. It can also be a symptom of underlying medical conditions, such as anemia or hypothyroidism."))
+
+    @Rule(Symptom(type='insomnia'))
     def explain_insomnia(self):
-        self.declare(Fact(explanation="El insomnio puede ser causado por una variedad de factores, incluidos el estrés, la ansiedad, los hábitos de sueño irregulares, el consumo de cafeína o ciertas condiciones médicas. La falta de sueño puede tener un impacto significativo en el estado de ánimo y el funcionamiento diario."))
+        self.declare(Fact(explanation="Insomnia can be caused by a variety of factors, including stress, anxiety, irregular sleep habits, caffeine consumption, or certain medical conditions. Lack of sleep can significantly impact mood and daily functioning."))
 
-    @Rule(Emotion(state='triste'))
+    @Rule(Emotion(state='sad'))
     def explain_sadness(self):
-        self.declare(Fact(explanation="La tristeza es una emoción natural que puede ser desencadenada por eventos estresantes, pérdidas personales o cambios en la vida. Es importante reconocer y expresar estas emociones para procesarlas de manera saludable."))
+        self.declare(Fact(explanation="Sadness is a natural emotion that can be triggered by stressful events, personal losses, or life changes. It is important to recognize and express these emotions to process them healthily."))
 
-    @Rule(Context(situation='problemas_familiares'))
+    @Rule(Context(situation='family_problems'))
     def explain_family_problems(self):
-            self.declare(Fact(explanation="Los problemas familiares pueden causar estrés, ansiedad y conflicto emocional. Es importante comunicarse abierta y honestamente con los miembros de la familia para resolver problemas y mantener relaciones saludables."))
+        self.declare(Fact(explanation="Family problems can cause stress, anxiety, and emotional conflict. It is important to communicate openly and honestly with family members to resolve issues and maintain healthy relationships."))
 
-    @Rule(Context(situation='dificultades_en_el_trabajo'))
+    @Rule(Context(situation='work_difficulties'))
     def explain_work_issues(self):
-        self.declare(Fact(explanation="Las dificultades en el trabajo pueden ser una fuente significativa de estrés y ansiedad. Es importante buscar apoyo y desarrollar estrategias para manejar el estrés laboral de manera efectiva."))
+        self.declare(Fact(explanation="Work difficulties can be a significant source of stress and anxiety. It is important to seek support and develop strategies to manage work-related stress effectively."))
+
    
     
 

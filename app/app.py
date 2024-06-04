@@ -3,16 +3,16 @@ from experta import Fact
 
 app = Flask(__name__)
 
-# Importar la lógica del chatbot
+# Import the chatbot logic
 from mi_chatbot import Chatbot, Message, MentalHealthChatbot, Symptom, Emotion, Context, Explanation
 from bayesian_model import predict_emotion_and_symptom
 
-# Crear una instancia del chatbot
+# Create an instance of the chatbot
 chatbot = Chatbot()
 chatbot_engine = MentalHealthChatbot()
 chatbot_engine.reset()
 
-# Variable global para almacenar la información de la última emoción detectada
+# Global variable to store the information of the last detected emotion
 last_emotion = None
 
 @app.route('/chat', methods=['GET', 'POST'])
@@ -23,24 +23,24 @@ def chat():
         data = request.json
         user_input = data.get('message')
         
-        # Reseteamos el motor para limpiar cualquier hecho previo
+        # Reset the engine to clear any previous facts
         chatbot_engine.reset()
 
-        # Declaramos los hechos basados en la entrada del usuario
-        if 'hola' in user_input.lower():
-            chatbot_engine.declare(Message(content='Hola'))
-        elif 'adiós' in user_input.lower():
-            chatbot_engine.declare(Message(content='Adiós'))        
+        # Declare facts based on user input
+        if 'hello' in user_input.lower():
+            chatbot_engine.declare(Message(content='Hello'))
+        elif 'goodbye' in user_input.lower():
+            chatbot_engine.declare(Message(content='Goodbye'))        
         else:
-            # Identificar la emoción del usuario
+            # Identify the user's emotion
             emotions = []
 
-            if 'triste' in user_input.lower():
-                emotions.append('triste')
-            if 'estresado' in user_input.lower():
-                emotions.append('estresado')
-            if 'contento' in user_input.lower():
-                emotions.append('contento')
+            if 'sad' in user_input.lower():
+                emotions.append('sad')
+            if 'stressed' in user_input.lower():
+                emotions.append('stressed')
+            if 'happy' in user_input.lower():
+                emotions.append('happy')
             
             for emotion in emotions:
                 chatbot_engine.declare(Emotion(state=emotion))
@@ -48,7 +48,7 @@ def chat():
         
         chatbot_engine.run()
         
-        # Obtener la respuesta del sistema experto
+        # Get the response from the expert system
         response_fact = next((fact for fact in chatbot_engine.facts.values() if fact.__class__ == Fact and 'response' in fact), None)
         explanation_fact = next((fact for fact in chatbot_engine.facts.values() if fact.__class__ == Explanation), None)
 
@@ -56,7 +56,7 @@ def chat():
         explanation = explanation_fact['info'] if explanation_fact else None
 
         if not response:
-            response = "¿Te gustaría saber más sobre esta emoción?"
+            response = "Would you like to know more about this emotion?"
         
         return jsonify({'response': response, 'explanation': explanation})
     
@@ -71,27 +71,28 @@ def expand():
         user_input = data.get('message')
 
         if last_emotion:
-            if 'si' in user_input.lower():
+            if 'yes' in user_input.lower():
                 chatbot_engine.reset()
                 chatbot_engine.declare(Emotion(state=last_emotion))
-                chatbot_engine.declare(Message(content='Expandir'))
+                chatbot_engine.declare(Message(content='Expand'))
                 chatbot_engine.run()
 
                 explanation_fact = next((fact for fact in chatbot_engine.facts.values() if fact.__class__ == Explanation), None)
                 explanation = explanation_fact['info'] if explanation_fact else None
 
-                last_emotion = None  # Restablecer last_emotion a None después de manejar la solicitud de expansión
+                last_emotion = None  # Reset last_emotion to None after handling the expansion request
 
                 return jsonify({'response': explanation})
 
             elif 'no' in user_input.lower():
-                last_emotion = None  # Restablecer last_emotion a None si el usuario no quiere ampliar la información
-                return jsonify({'response': "Entendido, ¿en qué más puedo ayudarte?"})
+                last_emotion = None  # Reset last_emotion to None if the user does not want to expand the information
+                return jsonify({'response': "Understood, how else can I help you?"})
 
-        return jsonify({'response': "Lo siento, no entendí tu respuesta."})
+        return jsonify({'response': "Sorry, I didn't understand your response."})
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
